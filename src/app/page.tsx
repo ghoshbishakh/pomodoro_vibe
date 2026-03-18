@@ -10,8 +10,8 @@ import { loadPersistedState, savePersistedState } from "@/lib/storage";
 export default function Home() {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [settings, setSettings] = React.useState<PomodoroSettings>(DEFAULT_SETTINGS);
-  const [youtubeInput, setYoutubeInput] = React.useState("jfKfPfyJRdk");
-  const [youtubeVideoId, setYoutubeVideoId] = React.useState("jfKfPfyJRdk");
+  const [youtubeInput, setYoutubeInput] = React.useState("Xh4BNbxpI8");
+  const [youtubeVideoId, setYoutubeVideoId] = React.useState("Xh4BNbxpI8");
 
   React.useEffect(() => {
     const persisted = loadPersistedState();
