@@ -1,0 +1,26 @@
+---
+description: Auto-context map for Pomodoro Vibe (important files + when to pull them in)
+alwaysApply: true
+---
+
+## Pomodoro Vibe: important files
+
+This repo is a small Next.js App Router app. When working on any feature/bug, pull in the canonical files below **before** proposing changes.
+
+### Always include (small core)
+
+- `src/app/page.tsx` (app composition, settings + persistence wiring)
+- `src/hooks/usePomodoro.ts` (timer loop + derived progress)
+- `src/lib/pomodoro.ts` (reducer, phase transitions, time math, settings clamp)
+- `src/lib/storage.ts` (localStorage schema `pomodoro_vibe:v1`, defaults, migration implications)
+- `src/lib/youtube.ts` (YouTube URL/ID parsing)
+- `src/components/TimerGlassCard.tsx` (primary UI + keyboard shortcuts)
+- `src/components/SettingsDrawer.tsx` (settings UX + YouTube input)
+
+### Add when relevant (topic-based)
+
+- YouTube embed/visual issues: also read `src/components/YouTubeBackground.tsx`
+- Styling/theme/layout: also read `src/app/globals.css` and `src/app/layout.tsx`
+- Build/export/deploy quirks: also read `next.config.ts`
+- TS path/typing/module issues: also read `tsconfig.json` (alias is `@/*` -> `src/*`)
+- Dependency/lint/script issues: also read `package.json` and `eslint.config.mjs`
