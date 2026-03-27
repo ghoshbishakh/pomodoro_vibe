@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
+import type { YouTubeParsedInput } from "@/lib/youtube";
 
 type Props = {
-  videoId: string;
+  media: YouTubeParsedInput;
   className?: string;
 };
 
-export function YouTubeBackground({ videoId, className }: Props) {
+export function YouTubeBackground({ media, className }: Props) {
   // Browsers block autoplay-with-sound, so we start muted (via URL param),
   // then toggle audio without reloading using the YouTube IFrame Player API.
   const [muted, setMuted] = React.useState(true);
@@ -26,16 +27,23 @@ export function YouTubeBackground({ videoId, className }: Props) {
       rel: "0",
       playsinline: "1",
       loop: "1",
-      playlist: videoId,
       modestbranding: "1",
       iv_load_policy: "3",
       disablekb: "1",
       enablejsapi: "1",
     });
+
+    if (media.type === "playlist") {
+      params.set("listType", "playlist");
+      params.set("list", media.id);
+      return `https://www.youtube-nocookie.com/embed/?${params.toString()}`;
+    }
+
+    params.set("playlist", media.id);
     return `https://www.youtube-nocookie.com/embed/${encodeURIComponent(
-      videoId
+      media.id
     )}?${params.toString()}`;
-  }, [videoId]);
+  }, [media]);
 
   React.useEffect(() => {
     mutedRef.current = muted;
@@ -104,7 +112,7 @@ export function YouTubeBackground({ videoId, className }: Props) {
         return;
       }
 
-      // Recreate player when videoId changes. This will restart (expected) only on video change.
+      // Recreate player when media changes. This will restart (expected) only on video change.
       playerRef.current = new PlayerCtor(iframeId, {
         events: {
           onReady: () => {
@@ -127,7 +135,7 @@ export function YouTubeBackground({ videoId, className }: Props) {
       p?.destroy?.();
       playerRef.current = null;
     };
-  }, [iframeId, videoId]);
+  }, [iframeId, media]);
 
   React.useEffect(() => {
     const p = playerRef.current as unknown as { mute?: () => void; unMute?: () => void };

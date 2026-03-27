@@ -2,14 +2,14 @@
 
 import * as React from "react";
 import { clampSettings, type PomodoroSettings } from "@/lib/pomodoro";
-import { parseYouTubeVideoId } from "@/lib/youtube";
+import { parseYouTubeInput, type YouTubeParsedInput } from "@/lib/youtube";
 
 type Props = {
   open: boolean;
   onClose: () => void;
   settings: PomodoroSettings;
   youtubeInput: string;
-  onChange: (next: { settings: PomodoroSettings; youtubeInput: string; youtubeVideoId: string | null }) => void;
+  onChange: (next: { settings: PomodoroSettings; youtubeInput: string; youtubeMedia: YouTubeParsedInput | null }) => void;
 };
 
 function Field({
@@ -48,7 +48,7 @@ export function SettingsDrawer({
   youtubeInput,
   onChange,
 }: Props) {
-  const videoId = React.useMemo(() => parseYouTubeVideoId(youtubeInput), [youtubeInput]);
+  const parsedMedia = React.useMemo(() => parseYouTubeInput(youtubeInput), [youtubeInput]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -63,7 +63,7 @@ export function SettingsDrawer({
 
   const applySettings = (partial: Partial<PomodoroSettings>) => {
     const next = clampSettings({ ...settings, ...partial });
-    onChange({ settings: next, youtubeInput, youtubeVideoId: videoId });
+    onChange({ settings: next, youtubeInput, youtubeMedia: parsedMedia });
   };
 
   return (
@@ -126,7 +126,7 @@ export function SettingsDrawer({
 
           <div className="mt-6 grid gap-2">
             <label className="text-sm font-medium text-white/80">
-              YouTube background (URL or ID)
+              YouTube background (URL, Video ID, or Playlist ID)
             </label>
             <input
               type="text"
@@ -135,19 +135,20 @@ export function SettingsDrawer({
                 onChange({
                   settings,
                   youtubeInput: e.target.value,
-                  youtubeVideoId: parseYouTubeVideoId(e.target.value),
+                  youtubeMedia: parseYouTubeInput(e.target.value),
                 })
               }
-              placeholder="Paste a YouTube link or video id (e.g. jfKfPfyJRdk)"
+              placeholder="Paste a YouTube link, video id, or playlist id"
               className="h-11 rounded-2xl border border-white/15 bg-white/5 px-4 text-white outline-none placeholder:text-white/30 focus:ring-2 focus:ring-white/25"
             />
             <div className="text-xs text-white/60">
-              {videoId ? (
+              {parsedMedia ? (
                 <span>
-                  Looks good. Video id: <span className="font-mono text-white/80">{videoId}</span>
+                  Looks good. {parsedMedia.type === "playlist" ? "Playlist ID" : "Video ID"}:{" "}
+                  <span className="font-mono text-white/80">{parsedMedia.id}</span>
                 </span>
               ) : (
-                <span>Enter a valid YouTube URL or 11-character video id.</span>
+                <span>Enter a valid YouTube URL, video ID, or playlist ID.</span>
               )}
             </div>
           </div>
